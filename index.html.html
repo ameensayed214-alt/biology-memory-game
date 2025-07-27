@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Biology Memory Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f4f4f4;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #game-board {
+      width: 700px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .memory-card {
+      width: 150px;
+      height: 100px;
+      margin: 10px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+      cursor: pointer;
+    }
+    .memory-card.flip {
+      transform: rotateY(180deg);
+    }
+    .memory-card .front-face,
+    .memory-card .back-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      user-select: none;
+    }
+    .memory-card .front-face {
+      background: #4682B4;  /* Blue back side */
+      color: white;
+    }
+    .memory-card .back-face {
+      background: #fff;  /* White front side */
+      color: #333;
+      transform: rotateY(180deg);
+    }
+    #start-btn {
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Biology Memory Game 🧠</h1>
+  <button id="start-btn">Start Game</button>
+  <div id="game-board">
+    <div class="memory-card" data-word="Insect">
+      <div class="front-face">❓</div>
+      <div class="back-face">🪰<br>Insect</div>
+    </div>
+    <div class="memory-card" data-word="Insect">
+      <div class="front-face">❓</div>
+      <div class="back-face">🪰<br>Insect</div>
+    </div>
+    <div class="memory-card" data-word="Crustacean">
+      <div class="front-face">❓</div>
+      <div class="back-face">🦀<br>Crustacean</div>
+    </div>
+    <div class="memory-card" data-word="Crustacean">
+      <div class="front-face">❓</div>
+      <div class="back-face">🦀<br>Crustacean</div>
+    </div>
+    <div class="memory-card" data-word="Mitochondria">
+      <div class="front-face">❓</div>
+      <div class="back-face">⚡<br>Mitochondria</div>
+    </div>
+    <div class="memory-card" data-word="Mitochondria">
+      <div class="front-face">❓</div>
+      <div class="back-face">⚡<br>Mitochondria</div>
+    </div>
+    <div class="memory-card" data-word="Neuron">
+      <div class="front-face">❓</div>
+      <div class="back-face">🧠<br>Neuron</div>
+    </div>
+    <div class="memory-card" data-word="Neuron">
+      <div class="front-face">❓</div>
+      <div class="back-face">🧠<br>Neuron</div>
+    </div>
+    <div class="memory-card" data-word="Synapse">
+      <div class="front-face">❓</div>
+      <div class="back-face">🔌<br>Synapse</div>
+    </div>
+    <div class="memory-card" data-word="Synapse">
+      <div class="front-face">❓</div>
+      <div class="back-face">🔌<br>Synapse</div>
+    </div>
+    <div class="memory-card" data-word="DNA">
+      <div class="front-face">❓</div>
+      <div class="back-face">🧬<br>DNA</div>
+    </div>
+    <div class="memory-card" data-word="DNA">
+      <div class="front-face">❓</div>
+      <div class="back-face">🧬<br>DNA</div>
+    </div>
+    <div class="memory-card" data-word="Protein">
+      <div class="front-face">❓</div>
+      <div class="back-face">🥩<br>Protein</div>
+    </div>
+    <div class="memory-card" data-word="Protein">
+      <div class="front-face">❓</div>
+      <div class="back-face">🥩<br>Protein</div>
+    </div>
+    <div class="memory-card" data-word="Chloroplast">
+      <div class="front-face">❓</div>
+      <div class="back-face">🌿<br>Chloroplast</div>
+    </div>
+    <div class="memory-card" data-word="Chloroplast">
+      <div class="front-face">❓</div>
+      <div class="back-face">🌿<br>Chloroplast</div>
+    </div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.memory-card');
+    const startBtn = document.getElementById('start-btn');
+    let firstCard, secondCard;
+    let lockBoard = true;
+
+    function flipCard() {
+      if (lockBoard || this === firstCard) return;
+
+      this.classList.add('flip');
+
+      if (!firstCard) {
+        firstCard = this;
+        return;
+      }
+
+      secondCard = this;
+      checkForMatch();
+    }
+
+    function checkForMatch() {
+      const isMatch = firstCard.dataset.word === secondCard.dataset.word;
+
+      if (isMatch) {
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        resetBoard();
+      } else {
+        lockBoard = true;
+        setTimeout(() => {
+          firstCard.classList.remove('flip');
+          secondCard.classList.remove('flip');
+          resetBoard();
+        }, 1000);
+      }
+    }
+
+    function resetBoard() {
+      [firstCard, secondCard] = [null, null];
+      lockBoard = false;
+    }
+
+    function shuffle() {
+      cards.forEach(card => {
+        let randomPos = Math.floor(Math.random() * 16);
+        card.style.order = randomPos;
+      });
+    }
+
+    function startGame() {
+      startBtn.disabled = true;
+      cards.forEach(card => card.classList.add('flip'));
+
+      setTimeout(() => {
+        cards.forEach(card => {
+          card.classList.remove('flip');
+          card.addEventListener('click', flipCard);
+        });
+        lockBoard = false;
+      }, 5000);
+    }
+
+    startBtn.addEventListener('click', () => {
+      shuffle();
+      startGame();
+    });
+  </script>
+</body>
+</html>
+
